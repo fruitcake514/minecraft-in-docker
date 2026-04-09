@@ -1,0 +1,9 @@
+[
+  {
+    "name": "Minecraft",
+    "output": "",
+    "cmd": "bash /scripts/launch-minecraft.sh",
+    "working-dir": "/home/gamer",
+    "image-path": ""
+  }
+]
