@@ -18,17 +18,20 @@ services:
       - "48002:48002/udp"
 
     environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+
       - DISPLAY=:0
       - XDG_RUNTIME_DIR=/tmp/runtime-root
       - PULSE_SERVER=unix:/tmp/pulse/native
 
-      # Name of Prism instance to auto-launch when present
       - MC_INSTANCE=Vanilla
 
-      # Intel iGPU:
+      # Intel iGPU
       - MESA_LOADER_DRIVER_OVERRIDE=iris
 
-      # AMD iGPU? use:
+      # AMD iGPU? replace with:
       # - MESA_LOADER_DRIVER_OVERRIDE=radeonsi
 
       - LIBGL_ALWAYS_SOFTWARE=0
@@ -40,7 +43,8 @@ services:
       - /dev/dri/card0:/dev/dri/card0
       - /dev/kfd:/dev/kfd
 
-    # IMPORTANT: replace these with your host's actual group IDs
+    # These are still needed for GPU access
+    # Check host values with:
     # getent group video
     # getent group render
     group_add:
