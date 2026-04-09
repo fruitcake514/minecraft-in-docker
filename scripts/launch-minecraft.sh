@@ -2,7 +2,6 @@
 set -e
 
 INSTANCE_NAME="${MC_INSTANCE:-Vanilla}"
-
 PRISM="/opt/prism/PrismLauncher.AppImage"
 
 if [ -d "/home/gamer/.local/share/PrismLauncher/instances/${INSTANCE_NAME}" ]; then
