@@ -21,6 +21,8 @@ RUN apt-get update && apt-get install -y \
     openjdk-21-jre \
     gamescope \
     mangohud \
+    gosu \
+    passwd \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Sunshine
@@ -37,8 +39,9 @@ RUN mkdir -p /opt/prism && \
       https://github.com/PrismLauncher/PrismLauncher/releases/latest/download/PrismLauncher-Linux-x86_64.AppImage && \
     chmod +x /opt/prism/PrismLauncher.AppImage
 
-# Create app user and data dirs
-RUN useradd -m -s /bin/bash gamer && \
+# Create internal app user (will be remapped at runtime)
+RUN groupadd -g 1000 gamer && \
+    useradd -u 1000 -g 1000 -m -s /bin/bash gamer && \
     mkdir -p /home/gamer/.config/sunshine \
              /home/gamer/.local/share/PrismLauncher \
              /home/gamer/.minecraft \
@@ -51,10 +54,8 @@ COPY entrypoint.sh /entrypoint.sh
 COPY scripts /scripts
 COPY config /config
 
-RUN chmod +x /entrypoint.sh /scripts/*.sh && \
-    chown -R gamer:gamer /scripts /config
+RUN chmod +x /entrypoint.sh /scripts/*.sh
 
-USER gamer
 WORKDIR /home/gamer
 
 ENTRYPOINT ["/entrypoint.sh"]
