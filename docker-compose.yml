@@ -49,8 +49,3 @@ services:
     tmpfs:
       - /tmp:size=2g
       - /run:size=256m
-      - SYS_ADMIN
-
-    tmpfs:
-      - /tmp:size=2g
-      - /run:size=256m
