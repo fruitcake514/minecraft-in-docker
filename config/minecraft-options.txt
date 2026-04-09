@@ -1,0 +1,11 @@
+fullscreen:false
+rawMouseInput:false
+pauseOnLostFocus:false
+enableVsync:false
+maxFps:120
+simulationDistance:8
+renderDistance:12
+entityDistanceScaling:1.0
+fov:1.0
+bobView:false
+darkMojangStudiosBackground:false
