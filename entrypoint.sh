@@ -4,40 +4,35 @@ set -e
 export PUID="${PUID:-1000}"
 export PGID="${PGID:-1000}"
 
+# Map UID/GID
 bash /scripts/remap-user.sh
 
 exec gosu gamer bash -c '
-  export DISPLAY=:0
-  export XDG_RUNTIME_DIR=/tmp/runtime-root
-  export PULSE_SERVER=unix:/tmp/pulse/native
+export DISPLAY=:0
+export XDG_RUNTIME_DIR=/tmp/runtime-root
+export PULSE_SERVER=unix:/tmp/pulse/native
 
-  # Ensure required dirs exist
-  mkdir -p "$XDG_RUNTIME_DIR" /tmp/pulse /tmp/.X11-unix
-  chmod 700 "$XDG_RUNTIME_DIR" /tmp/pulse /tmp/.X11-unix
+mkdir -p "$XDG_RUNTIME_DIR" /tmp/pulse
+chmod 700 "$XDG_RUNTIME_DIR"
 
-  bash /scripts/wait-for-gpu.sh
+# Start headless X
+Xvfb :0 -screen 0 1920x1080x24 +extension GLX +render -noreset &
 
-  pulseaudio --daemonize=yes --exit-idle-time=-1 --log-target=stderr || true
+# Start minimal window manager
+fluxbox &
 
-  Xvfb :0 -screen 0 1920x1080x24 +extension GLX +render -noreset &
-  sleep 2
+# Hide mouse cursor
+unclutter &
 
-  xset -dpms || true
-  xset s off || true
-  xset s noblank || true
+# Start VNC server
+x11vnc -display :0 -nopw -listen 0.0.0.0 -xkb -forever &
 
-  openbox &
-  sleep 2
+# Start noVNC for browser access
+/opt/novnc/utils/launch.sh --vnc localhost:5900 --listen 8080 &
 
-  mkdir -p /home/gamer/.config/sunshine
-  cp -n /config/sunshine.conf /home/gamer/.config/sunshine/sunshine.conf || true
-  cp -n /config/apps.json /home/gamer/.config/sunshine/apps.json || true
+# Wait a few seconds for X server
+sleep 5
 
-  # Run Sunshine AppImage
-  /opt/sunshine/Sunshine.AppImage &
-
-  sleep 5
-  bash /scripts/first-run.sh &
-
-  exec bash /scripts/launch-minecraft.sh
+# Start Minecraft/PrismLauncher
+exec bash /scripts/launch-minecraft.sh
 '
