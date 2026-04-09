@@ -11,8 +11,9 @@ exec gosu gamer bash -c '
   export XDG_RUNTIME_DIR=/tmp/runtime-root
   export PULSE_SERVER=unix:/tmp/pulse/native
 
-  mkdir -p "$XDG_RUNTIME_DIR" /tmp/pulse
-  chmod 700 "$XDG_RUNTIME_DIR"
+  # Ensure required dirs exist
+  mkdir -p "$XDG_RUNTIME_DIR" /tmp/pulse /tmp/.X11-unix
+  chmod 700 "$XDG_RUNTIME_DIR" /tmp/pulse /tmp/.X11-unix
 
   bash /scripts/wait-for-gpu.sh
 
@@ -32,9 +33,10 @@ exec gosu gamer bash -c '
   cp -n /config/sunshine.conf /home/gamer/.config/sunshine/sunshine.conf || true
   cp -n /config/apps.json /home/gamer/.config/sunshine/apps.json || true
 
-  sunshine &
-  sleep 5
+  # Run Sunshine AppImage
+  /opt/sunshine/Sunshine.AppImage &
 
+  sleep 5
   bash /scripts/first-run.sh &
 
   exec bash /scripts/launch-minecraft.sh
